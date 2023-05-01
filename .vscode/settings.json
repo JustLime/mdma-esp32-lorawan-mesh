@@ -2,5 +2,5 @@
   "files.associations": {
     "nvs_flash.h": "c"
   },
-  "cmake.sourceDirectory": "C:/Users/Chris/projects/hhn/lora-mesh-network/src"
+  "cmake.sourceDirectory": "/src"
 }
