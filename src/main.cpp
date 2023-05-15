@@ -1,8 +1,10 @@
-#include "ESP32_LoRaWAN.h"
+#include "heltec.h"
+
 
 void setup()
 {
   Serial.begin(115200);
+  Heltec.begin(true,false,true);
 }
 
 void loop() {}
