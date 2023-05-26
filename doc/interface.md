@@ -215,7 +215,7 @@ Payload:
 
 ### Sensor Data
 
-Noch unsicher, evtl einfach genirsch daten schicken, muss noch geprüft werden ob generisch machbar
+Still unsure if approach is good. Might be better to research and check if generic sensor data payload would be valid.
 
 Topic für alle Sensoren:
 ```
