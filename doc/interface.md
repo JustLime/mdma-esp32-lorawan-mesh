@@ -19,6 +19,20 @@ Using the following format:
   }
 ```
 
+A sample of the full JSON would look like this:
+```{
+    "head":{
+      "topic": "esp32/sample-topic",
+      "uuid": "aabbccdd",
+      "messageTimestamp": "2023-05-26T14:50:30+02:00",
+      "messageUid": "aabbccdd/2023-05-26T14:50:30+02:00"
+    },
+    "payload": {
+      ...(payload)
+    }
+   }
+```
+
 ## Interface
 
 The interface uses JSON for its payload.
