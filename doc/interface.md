@@ -49,7 +49,7 @@ Information about a specific mesh node
 #### Created at
 Topic:
 ```
-esp32/system-info/created-at
+v1/backend/measurements/created-at
 ```
 Payload:
 ```
@@ -67,7 +67,7 @@ Payload:
 #### Updated at
 Topic:
 ```
-esp32/system-info/updated-at
+v1/backend/measurements/updated-at
 ```
 Payload:
 ```
@@ -82,10 +82,28 @@ Payload:
 }
 ```
 
+#### Update ID
+Topic:
+```
+v1/backend/measurements/update-id
+```
+Payload:
+```
+{
+  ...(minimum info and then content following)
+  "content": {
+    "updateId": {
+      "type": "int",
+      "value": "1337"
+    }
+  }
+}
+```
+
 #### Health status
 Topic:
 ```
-esp32/system-info/health-status
+v1/backend/measurements/health-status
 ```
 Payload:
 ```
@@ -103,7 +121,7 @@ Payload:
 #### Battery status
 Topic:
 ```
-esp32/system-info/battery-status
+v1/backend/measurements/battery-status
 ```
 Payload:
 ```
@@ -121,7 +139,7 @@ Payload:
 #### Signal strength
 Topic:
 ```
-esp32/system-info/signal-strength
+v1/backend/measurements/signal-strength
 ```
 Payload:
 ```
@@ -141,7 +159,7 @@ Payload:
 #### Created at
 Topic:
 ```
-esp32/system-info/created-at
+v1/backend/measurements/created-at
 ```
 Payload:
 ```
@@ -159,7 +177,7 @@ Payload:
 #### Updated at
 Topic:
 ```
-esp32/system-info/updated-at
+v1/backend/measurements/updated-at
 ```
 Payload:
 ```
@@ -177,7 +195,7 @@ Payload:
 #### Health status
 Topic:
 ```
-esp32/system-info/health-status
+v1/backend/measurements/health-status
 ```
 Payload:
 ```
@@ -195,7 +213,7 @@ Payload:
 #### Battery status
 Topic:
 ```
-esp32/system-info/battery-status
+v1/backend/measurements/battery-status
 ```
 Payload:
 ```
@@ -213,7 +231,7 @@ Payload:
 #### Signal strength
 Topic:
 ```
-esp32/system-info/signal-strength
+v1/backend/measurements/signal-strength
 ```
 Payload:
 ```
@@ -234,14 +252,14 @@ Still unsure if approach is good. Might be better to research and check if gener
 
 Topic für alle Sensoren:
 ```
-esp32/sensor/#
+v1/sensors
 ```
 
 #### Camera
 
 Topic:
 ```
-esp32/sensor/camera
+v1/sensors/camera
 ```
 Payload:
 ```
@@ -259,15 +277,12 @@ Payload:
 ### Generic Message Acknowledge
 Topic:
 ```
-esp32/acknowledge
+v1/acknowledges/{message uid}
 ```
 Payload:
 ```
 {
   ...(minimum info and then content following)
-  "content": {
-    "messageUid": "aabbccdd/2023-05-26T14:50:30+02:00"
-  }
 }
 ```
 
