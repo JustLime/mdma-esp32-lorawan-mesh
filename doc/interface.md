@@ -20,7 +20,8 @@ Using the following format:
 ```
 
 A sample of the full JSON would look like this:
-```{
+```
+   {
     "head":{
       "topic": "esp32/sample-topic",
       "uuid": "aabbccdd",
