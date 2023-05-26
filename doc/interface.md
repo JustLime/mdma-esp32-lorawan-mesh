@@ -9,7 +9,7 @@ Each package contains at least:
   - timestamp: The timestamp for when the message was sent
   - message uid: unique identifier of the message (is this needed? might just use sender uuid and timestamp to check)
 
-Using the folliowing format:
+Using the following format:
 ```
   "head":{
     "topic": "esp32/sample-topic",
