@@ -4,7 +4,7 @@ This interface uses LoRa and MQTT for communication. Each node uses LoRa to send
 ## Messages
 Each package contains at least:
 - topic: The MQTT topic
-- payload: A variable length byte/string including these fields
+- payload: The field that holds the data including these fields
   - sender uuid: A uuid of the node that initially sent the message
   - timestamp: The timestamp for when the message was sent
   - message uid: unique identifier of the message (is this needed? might just use sender uuid and timestamp to check)
