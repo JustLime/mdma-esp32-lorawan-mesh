@@ -28,8 +28,8 @@ A sample of the full JSON would look like this:
       "messageTimestamp": "2023-05-26T14:50:30+02:00",
       "messageUid": "aabbccdd/2023-05-26T14:50:30+02:00"
     },
-    "payload": {
-      ...(payload)
+    "content": {
+      ...(content)
     }
    }
 ```
