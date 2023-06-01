@@ -56,7 +56,7 @@ void LoRaSendTask(void *parameter)
     Heltec.display->drawStringMaxWidth(0, 32, 128, "Message: " + message);
     Heltec.display->display();
 
-    Serial.println("CPU0");dd 
+    Serial.println("CPU0");
     Serial.println("Message: " + message);
 
     vTaskDelay(1000 / portTICK_PERIOD_MS); // Delay for 1 second
