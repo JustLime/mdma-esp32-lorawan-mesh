@@ -7,15 +7,13 @@ Each package contains at least:
 - payload: The field that holds the data including these fields
   - sender uuid: A uuid of the node that initially sent the message
   - timestamp: The timestamp for when the message was sent
-  - message uid: unique identifier of the message (is this needed? might just use sender uuid and timestamp to check)
 
 Using the following format:
 ```
   "head":{
     "topic": "esp32/sample-topic",
     "uuid": "aabbccdd",
-    "messageTimestamp": "2023-05-26T14:50:30+02:00",
-    "messageUid": "aabbccdd/2023-05-26T14:50:30+02:00"
+    "messageTimestamp": "1685640553",
   }
 ```
 
@@ -25,8 +23,7 @@ A sample of the full JSON would look like this:
     "head":{
       "topic": "esp32/sample-topic",
       "uuid": "aabbccdd",
-      "messageTimestamp": "2023-05-26T14:50:30+02:00",
-      "messageUid": "aabbccdd/2023-05-26T14:50:30+02:00"
+      "messageTimestamp": "1685640553",
     },
     "content": {
       ...(content)
@@ -58,7 +55,7 @@ Payload:
   "content": {
     "createdAt": {
       "type": "timestamp",
-      "value": "2023-05-26T14:50:30+02:00"
+      "value": "1685640553"
     }
   }
 }
@@ -76,7 +73,7 @@ Payload:
   "content": {
     "updatedAt": {
       "type": "timestamp",
-      "value": "2023-05-26T14:50:30+02:00"
+      "value": "1685640553"
     }
   }
 }
@@ -112,7 +109,7 @@ Payload:
   "content": {
     "createdAt": {
       "type": "timestamp",
-      "value": "2023-05-26T14:50:30+02:00"
+      "value": "1685640553"
     }
   }
 }
@@ -168,7 +165,7 @@ Payload:
   "content": {
     "createdAt": {
       "type": "timestamp",
-      "value": "2023-05-26T14:50:30+02:00"
+      "value": "1685640553"
     }
   }
 }
@@ -186,7 +183,7 @@ Payload:
   "content": {
     "updatedAt": {
       "type": "timestamp",
-      "value": "2023-05-26T14:50:30+02:00"
+      "value": "1685640553"
     }
   }
 }
@@ -204,7 +201,7 @@ Payload:
   "content": {
     "createdAt": {
       "type": "timestamp",
-      "value": "2023-05-26T14:50:30+02:00"
+      "value": "1685640553"
     }
   }
 }
