@@ -270,17 +270,3 @@ Payload:
   }
 }
 ```
-
-### Generic Message Acknowledge
-Topic:
-```
-v1/acknowledges/{message uid}
-```
-Payload:
-```
-{
-  ...(minimum info and then content following)
-}
-```
-
-Acknowledges are published back to the gateway as soon as a message is received by the node.
