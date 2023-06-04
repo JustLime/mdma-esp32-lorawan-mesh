@@ -100,7 +100,7 @@ Payload:
   ...(minimum info and then content following)
   "content": {
       "type": "signal-strength",
-      "value": "-78.4"
+      "value": "0cd1852e-196b-4e2a-a398-6ae835d0caee/-78.4"
   }
 }
 ```
