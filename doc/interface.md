@@ -6,11 +6,11 @@ Each package contains at least:
 - topic: The MQTT topic
 - payload: The field that holds the data including these fields
   - sender uuid: A uuid of the node that initially sent the message
-  - timestamp: The timestamp for when the message was sent
+  - timestamp: The unix timestamp for when the message was sent
 
 Using the following format:
 ```
-  "head":{
+  {
     "topic": "esp32/sample-topic",
     "uuid": "aabbccdd",
     "messageTimestamp": "1685640553",
@@ -20,14 +20,12 @@ Using the following format:
 A sample of the full JSON would look like this:
 ```
    {
-    "head":{
-      "topic": "esp32/sample-topic",
-      "uuid": "aabbccdd",
-      "messageTimestamp": "1685640553",
-    },
-    "content": {
-      ...(content)
-    }
+     "topic": "esp32/sample-topic",
+     "uuid": "aabbccdd",
+     "messageTimestamp": "1685640553",
+     "content": {
+      ...(content),
+     }
    }
 ```
 
@@ -43,56 +41,18 @@ All the topics are filled with sample data
 
 Information about a specific mesh node
 
-#### Created at
-Topic:
-```
-v1/backend/measurements/created-at
-```
-Payload:
-```
-{
-  ...(minimum info and then content following)
-  "content": {
-    "createdAt": {
-      "type": "timestamp",
-      "value": "1685640553"
-    }
-  }
-}
-```
-
-#### Updated at
-Topic:
-```
-v1/backend/measurements/updated-at
-```
-Payload:
-```
-{
-  ...(minimum info and then content following)
-  "content": {
-    "updatedAt": {
-      "type": "timestamp",
-      "value": "1685640553"
-    }
-  }
-}
-```
-
 #### Update ID
 Topic:
 ```
-v1/backend/measurements/update-id
+v1/backend/measurements
 ```
 Payload:
 ```
 {
   ...(minimum info and then content following)
   "content": {
-    "updateId": {
-      "type": "int",
-      "value": "1337"
-    }
+      "type": "update-id",
+      "value": "0cd1852e-196b-4e2a-a398-6ae835d0caee",
   }
 }
 ```
@@ -100,17 +60,15 @@ Payload:
 #### Health status
 Topic:
 ```
-v1/backend/measurements/health-status
+v1/backend/measurements/
 ```
 Payload:
 ```
 {
   ...(minimum info and then content following)
   "content": {
-    "createdAt": {
-      "type": "timestamp",
-      "value": "1685640553"
-    }
+      "type": "health-status",
+      "value": "1685640553",
   }
 }
 ```
@@ -118,17 +76,15 @@ Payload:
 #### Battery status
 Topic:
 ```
-v1/backend/measurements/battery-status
+v1/backend/measurements/
 ```
 Payload:
 ```
 {
   ...(minimum info and then content following)
   "content": {
-    "battery": {
-      "type": "int",
+      "type": "battery-status",
       "value": "69"
-    }
   }
 }
 ```
@@ -136,118 +92,24 @@ Payload:
 #### Signal strength
 Topic:
 ```
-v1/backend/measurements/signal-strength
+v1/backend/measurements/
 ```
 Payload:
 ```
 {
   ...(minimum info and then content following)
   "content": {
-    "signalStrength": {
-      "type": "float",
-      "value": "500.3"
-    }
-  }
-}
-```
-
-### System data
-
-#### Created at
-Topic:
-```
-v1/backend/measurements/created-at
-```
-Payload:
-```
-{
-  ...(minimum info and then content following)
-  "content": {
-    "createdAt": {
-      "type": "timestamp",
-      "value": "1685640553"
-    }
-  }
-}
-```
-
-#### Updated at
-Topic:
-```
-v1/backend/measurements/updated-at
-```
-Payload:
-```
-{
-  ...(minimum info and then content following)
-  "content": {
-    "updatedAt": {
-      "type": "timestamp",
-      "value": "1685640553"
-    }
-  }
-}
-```
-
-#### Health status
-Topic:
-```
-v1/backend/measurements/health-status
-```
-Payload:
-```
-{
-  ...(minimum info and then content following)
-  "content": {
-    "createdAt": {
-      "type": "timestamp",
-      "value": "1685640553"
-    }
-  }
-}
-```
-
-#### Battery status
-Topic:
-```
-v1/backend/measurements/battery-status
-```
-Payload:
-```
-{
-  ...(minimum info and then content following)
-  "content": {
-    "battery": {
-      "type": "int",
-      "value": "69"
-    }
-  }
-}
-```
-
-#### Signal strength
-Topic:
-```
-v1/backend/measurements/signal-strength
-```
-Payload:
-```
-{
-  ...(minimum info and then content following)
-  "content": {
-    "signalStrength": {
-      "type": "float",
-      "value": "500.3"
-    }
+      "type": "signal-strength",
+      "value": "-78.4"
   }
 }
 ```
 
 ### Sensor Data
 
-Still unsure if approach is good. Might be better to research and check if generic sensor data payload would be valid.
+Still unsure if approach is good enough. It might be better to research and check if generic sensor data payload would be valid.
 
-Topic für alle Sensoren:
+Topic for all sensors:
 ```
 v1/sensors
 ```
@@ -256,17 +118,15 @@ v1/sensors
 
 Topic:
 ```
-v1/sensors/camera
+v1/sensors/
 ```
 Payload:
 ```
 {
   ...(minimum info and then content following)
   "content": {
-      "sensor": {
         "uuid": "cam/MAC",
         "data": "200"
-      }
   }
 }
 ```
