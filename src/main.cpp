@@ -1,100 +1,93 @@
-#include "Arduino.h"
+/*
+ * See here: https://github.com/HelTecAutomation/Heltec_ESP32/blob/master/examples/LoRa/LoRaMultipleCommunication/LoRaMultipleCommunication.ino
+ */
+
 #include "heltec.h"
 
-UBaseType_t uxPriority = 1;
-uint32_t usStackDepth = 10000;
-void *pvParameters = NULL;
-TaskHandle_t *pvCreatedTask = NULL;
-int counter = 0;
-String message;
+#define BAND 868E6 // you can set band here directly,e.g. 868E6,915E6
 
-static long BAND = 868E6L;
+String outgoing; // outgoing message
 
-void sendMessageToNodes()
+byte localAddress = 0xBB; // address of this device
+byte destination = 0xFD;  // destination to send to
+
+byte msgCount = 0;     // count of outgoing messages
+long lastSendTime = 0; // last send time
+int interval = 2000;   // interval between sends
+
+void sendMessage(String outgoing)
 {
-  message = "message nr." + counter;
-
-  LoRa.setTxPower(14, RF_PACONFIG_PASELECT_PABOOST);
-
-  LoRa.beginPacket();
-  LoRa.println("message nr." + counter++);
-  LoRa.endPacket();
-
-  counter++;
+  LoRa.beginPacket();            // start packet
+  LoRa.write(destination);       // add destination address
+  LoRa.write(localAddress);      // add sender address
+  LoRa.write(msgCount);          // add message ID
+  LoRa.write(outgoing.length()); // add payload length
+  LoRa.print(outgoing);          // add payload
+  LoRa.endPacket();              // finish packet and send it
+  msgCount++;                    // increment message ID
 }
 
-String receiveMessageFromNode()
+void onReceive(int packetSize)
 {
-  // Receive LoRa message
-  int packetSize = LoRa.parsePacket();
+  if (packetSize == 0)
+    return; // if there's no packet, return
 
-  if (packetSize)
+  // read packet header bytes:
+  int recipient = LoRa.read();       // recipient address
+  byte sender = LoRa.read();         // sender address
+  byte incomingMsgId = LoRa.read();  // incoming msg ID
+  byte incomingLength = LoRa.read(); // incoming msg length
+
+  String incoming = "";
+
+  while (LoRa.available())
   {
-    String receivedMessage;
-
-    while (LoRa.available())
-    {
-      receivedMessage += LoRa.read();
-    }
-
-    return receivedMessage;
+    incoming += (char)LoRa.read();
   }
 
-  return "no message received";
-}
-
-void LoRaSendTask(void *parameter)
-{
-  while (true)
-  {
-    // Core 0 task logic here
-    sendMessageToNodes();
-
-    Heltec.display->clear();
-    Heltec.display->drawStringMaxWidth(0, 0, 128, "CPU0");
-    Heltec.display->drawStringMaxWidth(0, 16, 128, "Sending LoRa package...");
-    Heltec.display->drawStringMaxWidth(0, 32, 128, "Message: " + message);
-    Heltec.display->display();
-
-    Serial.println("CPU0");
-    Serial.println("Message: " + message);
-
-    vTaskDelay(1000 / portTICK_PERIOD_MS); // Delay for 1 second
+  if (incomingLength != incoming.length())
+  { // check length for error
+    Serial.println("error: message length does not match length");
+    return; // skip rest of function
   }
-}
 
-void LoRaReceiveTask(void *parameter)
-{
-  while (true)
-  {
-    // Core 1 task logic here
-    Heltec.display->clear();
-    Heltec.display->drawStringMaxWidth(0, 0, 128, "CPU1");
-    Heltec.display->drawStringMaxWidth(0, 16, 128, "Receiving LoRa package: ");
-    Heltec.display->display();
-    Serial.println("CPU1");
+  // if message is for this device, or broadcast, print details:
+  Serial.println("Received from: 0x" + String(sender, HEX));
+  Serial.println("Sent to: 0x" + String(recipient, HEX));
+  Serial.println("Message ID: " + String(incomingMsgId));
+  Serial.println("Message length: " + String(incomingLength));
+  Serial.println("Message: " + incoming);
+  Serial.println("RSSI: " + String(LoRa.packetRssi()));
+  Serial.println("Snr: " + String(LoRa.packetSnr()));
+  Serial.println();
 
-    vTaskDelay(1000 / portTICK_PERIOD_MS); // Delay for 1 second
-  }
+  Heltec.display->clear();
+  Heltec.display->drawStringMaxWidth(0, 0, 128, "Received from: 0x" + String(sender, HEX));
+  Heltec.display->drawStringMaxWidth(0, 20, 128, "Message ID: " + String(incomingMsgId));
+  Heltec.display->drawStringMaxWidth(0, 30, 128, "Message: " + incoming);
+  Heltec.display->drawStringMaxWidth(0, 40, 128, "RSSI: " + String(LoRa.packetRssi()));
+  Heltec.display->display();
 }
 
 void setup()
 {
+  // WIFI Kit series V1 not support Vext control
   Heltec.begin(BAND);
-  Serial.begin(115200);
 
-  Heltec.display->init();
-  Heltec.display->setFont(ArialMT_Plain_10);
-  Heltec.display->setTextAlignment(TEXT_ALIGN_LEFT);
-  delay(1500);
-  Heltec.display->clear();
-
-  xTaskCreatePinnedToCore(LoRaSendTask, "LoRa Send Task", usStackDepth, pvParameters, uxPriority, pvCreatedTask, 0);
-  xTaskCreatePinnedToCore(LoRaReceiveTask, "LoRa Receive Task", usStackDepth, pvParameters, uxPriority, pvCreatedTask, 1);
+  Serial.println("Heltec.LoRa Duplex");
 }
 
 void loop()
 {
-  // Empty loop as tasks are scheduled by FreeRTOS
-  vTaskDelay(1 / portTICK_PERIOD_MS);
+  if (millis() - lastSendTime > interval)
+  {
+    String message = "Hello,I'm coming!"; // send a message
+    sendMessage(message);
+    Serial.println("Sending " + message);
+    lastSendTime = millis(); // timestamp the message
+    interval = 1000;         // 2-3 seconds
+  }
+
+  // parse for a packet, and call onReceive with the result:
+  onReceive(LoRa.parsePacket());
 }
