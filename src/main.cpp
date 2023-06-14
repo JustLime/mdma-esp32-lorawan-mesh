@@ -3,7 +3,6 @@
  */
 
 #include "heltec.h"
-#include <qrcodeoled.h>
 
 #define BAND 868E6 // you can set band here directly,e.g. 868E6,915E6
 
@@ -16,12 +15,8 @@ byte msgCount = 0;     // count of outgoing messages
 long lastSendTime = 0; // last send time
 int interval = 1000;   // interval between sends
 
-QRcodeOled qrcode(Heltec.display);
-
 void sendMessage(String outgoing)
 {
-  LoRa.setTxPower(14, RF_PACONFIG_PASELECT_PABOOST);
-
   LoRa.beginPacket();            // start packet
   LoRa.write(destination);       // add destination address
   LoRa.write(localAddress);      // add sender address
@@ -66,28 +61,25 @@ void onReceive(int packetSize)
   Serial.println("Snr: " + String(LoRa.packetSnr()));
   Serial.println();
 
-  // Heltec.display->clear();
-  // Heltec.display->drawStringMaxWidth(0, 0, 128, "Received from: 0x" + String(sender, HEX));
-  // Heltec.display->drawStringMaxWidth(0, 20, 128, "Message ID: " + String(incomingMsgId));
-  // Heltec.display->drawStringMaxWidth(0, 30, 128, "Message: " + incoming);
-  // Heltec.display->drawStringMaxWidth(0, 40, 128, "RSSI: " + String(LoRa.packetRssi()));
-  // Heltec.display->display();
+  Heltec.display->clear();
+  Heltec.display->drawStringMaxWidth(0, 0, 128, "Received from: 0x" + String(sender, HEX));
+  Heltec.display->drawStringMaxWidth(0, 20, 128, "Message ID: " + String(incomingMsgId));
+  Heltec.display->drawStringMaxWidth(0, 30, 128, "Message: " + incoming);
+  Heltec.display->drawStringMaxWidth(0, 40, 128, "RSSI: " + String(LoRa.packetRssi()));
+  Heltec.display->display();
 }
 
 void setup()
 {
   // WIFI Kit series V1 not support Vext control
-  Heltec.begin(BAND);
+  Heltec.begin(true, true, true, true, BAND);
 
-  // Serial.println("Heltec.LoRa Duplex");
+  Serial.println("Heltec.LoRa Duplex");
 
-  // Heltec.display->setFont(ArialMT_Plain_10);
-  // Heltec.display->setTextAlignment(TEXT_ALIGN_LEFT);
-  // delay(1500);
-  // Heltec.display->clear();
-
-  qrcode.init();
-  qrcode.create("UUID: " + (String)localAddress);
+  Heltec.display->setFont(ArialMT_Plain_10);
+  Heltec.display->setTextAlignment(TEXT_ALIGN_LEFT);
+  delay(1500);
+  Heltec.display->clear();
 }
 
 void loop()
