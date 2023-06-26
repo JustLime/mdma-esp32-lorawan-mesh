@@ -10,51 +10,26 @@
  *
  */
 
-#include "heltec.h"
-#include "RH_RF95.h"
-#include "RHMesh.h"
-
-#include "error_message.h"
-
-// Pin Definitions
-#define LLG_SCK 5
-#define LLG_MISO 19
-#define LLG_MOSI 27
-#define LLG_CS 18 // Chip select pin
-#define LLG_RST 16
-#define LLG_DI0 26 // Interrupt pin on DI0
-#define LLG_DI1 35
-#define LLG_DI2 34
-
-#define MAX_MESSAGE_SIZE 244
-#define N_NODES 2
-#define TRANSMIT_INTERVAL 1000
+#include "config.h"
 
 RH_RF95 rf95(LLG_CS, LLG_DI0);
 RHMesh *manager;
+Display display;
 
 uint8_t nodeId;
 uint8_t routes[N_NODES]; // full routing table for mesh
 int16_t rssi[N_NODES];   // signal strength info
-char buf[RH_MESH_MAX_MESSAGE_LEN];
-
-void showMessageOnDisplay(char message[])
-{
-  Heltec.display->clear();
-  Heltec.display->setFont(ArialMT_Plain_10);
-  Heltec.display->drawStringMaxWidth(0, 0, 128, message);
-  Heltec.display->display();
-}
+char buf[MAX_MESSAGE_SIZE];
 
 void setup()
 {
   Heltec.display->init();
   Serial.begin(115200);
 
-  rf95.setFrequency(868.0);
-  rf95.setTxPower(13, false);
-  rf95.setSpreadingFactor(7);
-  rf95.setCADTimeout(500);
+  rf95.setFrequency(LORA_FREQUENCY);
+  rf95.setTxPower(TX_POWER, false);
+  rf95.setSpreadingFactor(SPREADING_FACTOR);
+  rf95.setCADTimeout(CAD_TIMEOUT);
 
   nodeId = 1;
 
@@ -65,21 +40,21 @@ void setup()
   if (!manager->init())
   {
     Serial.println(" init failed");
-    showMessageOnDisplay(" init failed");
+    display.showMessageOnDisplay(" init failed");
   }
   else
   {
     Serial.println(" done");
-    showMessageOnDisplay(" done");
+    display.showMessageOnDisplay(" done");
   }
 
   if (!rf95.setModemConfig(RH_RF95::Bw125Cr45Sf128))
   {
     Serial.println(F(ErrorMessage::MODEM_CONFIG_FAILED));
-    showMessageOnDisplay(ErrorMessage::MODEM_CONFIG_FAILED);
+    display.showMessageOnDisplay(ErrorMessage::MODEM_CONFIG_FAILED);
   }
   Serial.println("RF95 ready");
-  showMessageOnDisplay("RF95 ready");
+  display.showMessageOnDisplay("RF95 ready");
 
   for (uint8_t n = 1; n <= N_NODES; n++)
   {

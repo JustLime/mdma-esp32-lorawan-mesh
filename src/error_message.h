@@ -8,4 +8,4 @@ namespace ErrorMessage
   char MODEM_CONFIG_FAILED[] = "Modem config failed";
 }
 
-#endif
+#endif // ERROR_MESSAGE_H
