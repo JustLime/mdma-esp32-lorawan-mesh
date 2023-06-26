@@ -17,6 +17,8 @@ public:
   void initRoutes();
   void updateRoutingTable();
   void getRouteInfoString(char *p, size_t len);
+  void printNodeInfo(uint8_t node, char *s);
+  const __FlashStringHelper *getErrorString(uint8_t error);
 };
 
 #endif // MESH_NETWORK_H
