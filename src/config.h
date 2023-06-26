@@ -15,6 +15,7 @@
 #include "RH_RF95.h"
 #include "RHMesh.h"
 #include "heltec.h"
+#include <qrcodeoled.h>
 
 #include "display.h"
 #include "mesh_network.h"
