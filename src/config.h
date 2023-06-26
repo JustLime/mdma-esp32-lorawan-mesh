@@ -17,6 +17,7 @@
 #include "heltec.h"
 
 #include "display.h"
+#include "mesh_network.h"
 #include "error_message.h"
 
 // Pin Definitions for Heltec WiFi Lora 32 V2

@@ -14,20 +14,9 @@ public:
 
   void setup();
   void loop();
+  void initRoutes();
   void updateRoutingTable();
   void getRouteInfoString(char *p, size_t len);
 };
-
-MeshNetwork::MeshNetwork()
-{
-}
-
-MeshNetwork::~MeshNetwork()
-{
-}
-
-void MeshNetwork::setup()
-{
-}
 
 #endif // MESH_NETWORK_H

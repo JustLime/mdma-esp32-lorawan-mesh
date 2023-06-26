@@ -15,21 +15,15 @@
 RH_RF95 rf95(LLG_CS, LLG_DI0);
 RHMesh *manager;
 Display display;
+MeshNetwork network;
 
 uint8_t nodeId;
-uint8_t routes[N_NODES]; // full routing table for mesh
-int16_t rssi[N_NODES];   // signal strength info
+int16_t rssi[N_NODES]; // signal strength info
 char buf[MAX_MESSAGE_SIZE];
 
 void setup()
 {
-  Heltec.display->init();
-  Serial.begin(115200);
-
-  rf95.setFrequency(LORA_FREQUENCY);
-  rf95.setTxPower(TX_POWER, false);
-  rf95.setSpreadingFactor(SPREADING_FACTOR);
-  rf95.setCADTimeout(CAD_TIMEOUT);
+  network.setup();
 
   nodeId = 1;
 
@@ -48,19 +42,7 @@ void setup()
     display.showMessageOnDisplay(" done");
   }
 
-  if (!rf95.setModemConfig(RH_RF95::Bw125Cr45Sf128))
-  {
-    Serial.println(F(ErrorMessage::MODEM_CONFIG_FAILED));
-    display.showMessageOnDisplay(ErrorMessage::MODEM_CONFIG_FAILED);
-  }
-  Serial.println("RF95 ready");
-  display.showMessageOnDisplay("RF95 ready");
-
-  for (uint8_t n = 1; n <= N_NODES; n++)
-  {
-    routes[n - 1] = 0;
-    rssi[n - 1] = 0;
-  }
+  network.initRoutes();
 }
 
 const __FlashStringHelper *getErrorString(uint8_t error)
@@ -86,48 +68,6 @@ const __FlashStringHelper *getErrorString(uint8_t error)
   return F("unknown");
 }
 
-void updateRoutingTable()
-{
-  for (uint8_t n = 1; n <= N_NODES; n++)
-  {
-    RHRouter::RoutingTableEntry *route = manager->getRouteTo(n);
-    if (n == nodeId)
-    {
-      routes[n - 1] = 255; // self
-    }
-    else
-    {
-      // routes[n - 1] = route->next_hop; // TODO: Keeps resetting, when nodeId is 0, NULL or invalid
-      if (routes[n - 1] == 0)
-      {
-        // if we have no route to the node, reset the received signal strength
-        rssi[n - 1] = 0;
-      }
-    }
-  }
-}
-
-// Create a JSON string with the routing info to each node
-void getRouteInfoString(char *p, size_t len)
-{
-  p[0] = '\0';
-  strcat(p, "[");
-  for (uint8_t n = 1; n <= N_NODES; n++)
-  {
-    strcat(p, "{\"n\":");
-    sprintf(p + strlen(p), "%d", routes[n - 1]);
-    strcat(p, ",");
-    strcat(p, "\"r\":");
-    sprintf(p + strlen(p), "%d", rssi[n - 1]);
-    strcat(p, "}");
-    if (n < N_NODES)
-    {
-      strcat(p, ",");
-    }
-  }
-  strcat(p, "]");
-}
-
 void printNodeInfo(uint8_t node, char *s)
 {
   Serial.print(F("node: "));
@@ -147,8 +87,8 @@ void loop()
     if (n == nodeId)
       continue; // self
 
-    updateRoutingTable();
-    getRouteInfoString(buf, RH_MESH_MAX_MESSAGE_LEN);
+    network.updateRoutingTable();
+    network.getRouteInfoString(buf, RH_MESH_MAX_MESSAGE_LEN);
 
     Serial.print(F("->"));
     Serial.print(n);
