@@ -7,6 +7,8 @@ MeshNetwork network;
 
 void setup()
 {
+  EEPROM.begin(EEPROM_SIZE);
+
   network.setup();
 
   network.initRoutes();

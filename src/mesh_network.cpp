@@ -1,6 +1,7 @@
 #include "config.h"
 
 Display display;
+Node node;
 
 uint8_t routes[N_NODES]; // full routing table for mesh
 int16_t rssi[N_NODES];   // signal strength info
@@ -31,9 +32,13 @@ void MeshNetwork::setup()
   display.showMessageOnDisplay("RF95 ready");
 
   Serial.print(F("initializing node "));
-  Node node;
   nodeId = 1;
+
+  Serial.println("Node ID: " + (String)node.getId());
+
   node.setId(nodeId);
+
+  Serial.println("Node ID after set: " + (String)node.getId());
   String uuid = node.generateUUID(nodeId).toCharArray();
   node.setUuid(uuid);
 

@@ -35,7 +35,7 @@ uint8_t Node::getId()
     Serial.println(F("SUCCESS"));
   }
 
-  return this->id;
+  return readVal;
 }
 
 void Node::setUuid(String uuid)

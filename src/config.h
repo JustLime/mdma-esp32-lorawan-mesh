@@ -43,6 +43,8 @@
 
 // Serial monitor speed used for this device.
 #define MONITOR_SPEED 115200
+// Size of the EEPROM (Electrically Erasable Programmable Read Only Memory).
+#define EEPROM_SIZE 4
 
 // Display
 
