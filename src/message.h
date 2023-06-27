@@ -5,20 +5,51 @@
 
 /**
  * @file message.h
- * @author Christian Deme, Leon Trunk, Rudolf Zitlau
+ * @authors Christian Deme, Leon Trunk, Rudolf Zitlau
  * @brief Defines a LoRa message used in the mesh network.
  * @version 0.1
  * @date 2023-06-23
  *
  * @copyright Copyright (c) 2023
- *
  */
 
-struct Message
+struct Header
 {
-  uint8_t preamble;
-  uint8_t header; // TO, FROM, ID, FLAGS
-  uint8_t payload;
+  uint8_t to;
+  uint8_t from;
+  uint8_t id;
+  uint8_t flags;
+};
+
+struct Content
+{
+  String type;
+  String value;
+};
+
+struct Payload
+{
+  String topic;
+  String uuid;
+  String messageTimestamp;
+  Content content;
+};
+
+class Message
+{
+private:
+  Header header;
+  Payload payload;
+
+public:
+  Message();
+  Message(Header header, Payload payload);
+
+  void setHeader(Header header);
+  Header getHeader();
+  void setPayload(Payload payload);
+  Payload getPayload();
+  String serializeMessage();
 };
 
 #endif // MESSAGE_H

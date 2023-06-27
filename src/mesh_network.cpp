@@ -32,13 +32,13 @@ void MeshNetwork::setup()
 
   if (!manager->init())
   {
-    Serial.println(" init failed");
-    display.showMessageOnDisplay(" init failed");
+    Serial.println("Mesh init failed");
+    display.showMessageOnDisplay("Mesh init failed");
   }
   else
   {
-    Serial.println(" done");
-    display.showMessageOnDisplay(" done");
+    Serial.println("Mesh init done");
+    display.showMessageOnDisplay("Mesh init done");
   }
 }
 
