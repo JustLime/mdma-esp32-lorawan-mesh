@@ -10,7 +10,7 @@ uint8_t nodeId = 1;
 void MeshNetwork::setup()
 {
   Heltec.display->init();
-  Serial.begin(115200);
+  Serial.begin(MONITOR_SPEED);
 
   rf95.setFrequency(LORA_FREQUENCY);
   rf95.setTxPower(TX_POWER, false);
@@ -55,6 +55,7 @@ void MeshNetwork::loop()
     Serial.print(n);
     Serial.print(F(" :"));
     Serial.print(buf);
+
     // send an acknowledged message to the target node
     uint8_t error = manager->sendtoWait((uint8_t *)buf, strlen(buf), n);
     if (error != RH_ROUTER_ERROR_NONE)
@@ -66,6 +67,7 @@ void MeshNetwork::loop()
     else
     {
       Serial.println(F(" OK"));
+
       // we received an acknowledgement from the next hop for the node we tried to send to.
       RHRouter::RoutingTableEntry *route = manager->getRouteTo(n);
       if (route->next_hop != 0)
