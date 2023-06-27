@@ -28,7 +28,7 @@ Payload Message::getPayload()
   return this->payload;
 }
 
-String Message::serializeMessage()
+String Message::getSerializedMessage()
 {
   StaticJsonDocument<MAX_MESSAGE_SIZE> doc;
   doc["topic"] = this->getPayload().topic;

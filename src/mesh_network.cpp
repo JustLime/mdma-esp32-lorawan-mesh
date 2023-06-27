@@ -20,7 +20,7 @@ void MeshNetwork::setup()
   // See here: https://www.airspayce.com/mikem/arduino/RadioHead/classRH__RF95.html#ab9605810c11c025758ea91b2813666e3
   if (!rf95.setModemConfig(RH_RF95::Bw125Cr45Sf128))
   {
-    Serial.println(F(ErrorMessage::MODEM_CONFIG_FAILED));
+    Serial.println(ErrorMessage::MODEM_CONFIG_FAILED);
     display.showMessageOnDisplay(ErrorMessage::MODEM_CONFIG_FAILED);
   }
   Serial.println("RF95 ready");

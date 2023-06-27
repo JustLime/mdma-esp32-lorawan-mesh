@@ -10,7 +10,8 @@ public:
 
   void showMessageOnDisplay(char *message);
   void showMessageOnDisplay(const char *message);
-  void showQRCode(uint8_t uuid);
+  void showMessageOnDisplay(const String message);
+  void showQRCode(String uuid);
 };
 
 #endif // DISPLAY_H

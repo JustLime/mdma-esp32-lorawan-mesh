@@ -49,7 +49,7 @@ public:
   Header getHeader();
   void setPayload(Payload payload);
   Payload getPayload();
-  String serializeMessage();
+  String getSerializedMessage();
 };
 
 #endif // MESSAGE_H

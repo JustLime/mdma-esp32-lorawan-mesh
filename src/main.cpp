@@ -26,6 +26,7 @@ RH_RF95 rf95(LORA_DEFAULT_SS_PIN, LORA_DEFAULT_DIO0_PIN);
 void setup()
 {
   Serial.begin(MONITOR_SPEED);
+  Heltec.display->init();
 
   pinMode(LORA_DEFAULT_RESET_PIN, OUTPUT);
   digitalWrite(LORA_DEFAULT_RESET_PIN, HIGH);
@@ -111,6 +112,9 @@ void loop()
       payload.content = content;
       payload.uuid = "0cd1852e-196b-4e2a-a398-6ae835d0caee";
       message.setPayload(payload);
+
+      Display display;
+      display.showMessageOnDisplay("RSSI: " + (String)rssi + " dBm");
 
       // Output the header and message data separately
       Serial.print("Header ID: ");
