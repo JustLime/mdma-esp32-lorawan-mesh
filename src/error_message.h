@@ -6,6 +6,7 @@
 namespace ErrorMessage
 {
   extern const String MODEM_CONFIG_FAILED;
+  extern const String LORA_INIT_FAILED;
 }
 
 #endif // ERROR_MESSAGE_H

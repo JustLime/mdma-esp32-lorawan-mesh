@@ -18,6 +18,7 @@
 #include <qrcodeoled.h>
 #include "ArduinoJson.h"
 #include "UUID.h"
+#include "EEPROM.h"
 
 #include "display.h"
 #include "mesh_network.h"
@@ -26,30 +27,53 @@
 #include "node.h"
 
 // All further pin Definitions for Heltec WiFi Lora 32 V2
-#define LORA_SCK 5   // SPI clock pin
-#define LORA_MISO 19 // SPI data input pin
-#define LORA_MOSI 27 // SPI data output pin
-#define LORA_DI1 35  // Interrupt pin for DI1
-#define LORA_DI2 34  // Interrupt pin for DI2
+
+// SPI clock pin.
+#define LORA_SCK 5
+// SPI data input pin.
+#define LORA_MISO 19
+// SPI data output pin.
+#define LORA_MOSI 27
+// Interrupt pin for DI1.
+#define LORA_DI1 35
+// Interrupt pin for DI2.
+#define LORA_DI2 34
 
 // Specific settings for ESP32 devices
-#define MONITOR_SPEED 115200 // Serial monitor speed used for this device.
+
+// Serial monitor speed used for this device.
+#define MONITOR_SPEED 115200
 
 // Display
-#define SCREEN_WIDTH 128 // Screen width of the OLED display.
-#define SCREEN_HEIGHT 64 // Screen height of the OLED display.
+
+// Screen width of the OLED display.
+#define SCREEN_WIDTH 128
+// Screen height of the OLED display.
+#define SCREEN_HEIGHT 64
 
 // Mesh Network
-#define N_NODES 2              // Number of nodes in this mesh network.
-#define TRANSMIT_INTERVAL 1000 // Interval of sending messages in milliseconds.
-#define INITIAL_NODE_ID 255    // Initial node ID for a node, should be overwritten by the right ID.
-#define GATEWAY_ADDRESS 1      // Node ID of the gateway ESP32 device.
+
+// Number of nodes in this mesh network.
+#define N_NODES 3
+// Interval of sending messages in milliseconds.
+#define TRANSMIT_INTERVAL 3000
+// Initial node ID for a node, should be overwritten by the right ID.
+#define INITIAL_NODE_ID 255
+// Node ID of the gateway ESP32 device.
+#define GATEWAY_ADDRESS 0
 
 // LoRa
-#define MAX_MESSAGE_SIZE 244 // Maximum message size of 244 bytes.
-#define SPREADING_FACTOR 7   // Spreading factor of the transmission, the higher the spreading factor the slower is the transmission speed but more devices could be reached.
-#define LORA_FREQUENCY 868.0 // Default LoRa frequency of 868MHz for Europe.
-#define TX_POWER 13          // Transmission power used for transmitting messages over LoRa radios in dBm, max. in Europe should be 14
-#define CAD_TIMEOUT 500      // Channel Activity Detection timeout in milliseconds
+#define MAX_MESSAGE_SIZE 244 /// Maximum message size of 244 bytes.
+/// Spreading factor of the transmission.
+/// The higher the spreading factor the slower is the transmission speed but more devices could be reached.
+/// Minimium is 7, maximum is 12.
+#define SPREADING_FACTOR 10
+// Default LoRa frequency of 868MHz for Europe.
+#define LORA_FREQUENCY 868.0
+/// Transmission power used for transmitting messages over LoRa radios in dBm.
+/// Max. allowed in Europe is 14.
+#define TX_POWER 14
+// Channel Activity Detection timeout in milliseconds.
+#define CAD_TIMEOUT 500
 
 #endif // CONFIG_H

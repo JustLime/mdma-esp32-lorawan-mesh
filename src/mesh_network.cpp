@@ -5,12 +5,16 @@ Display display;
 uint8_t routes[N_NODES]; // full routing table for mesh
 int16_t rssi[N_NODES];   // signal strength info
 char buf[MAX_MESSAGE_SIZE];
-uint8_t nodeId = 1;
+
+uint8_t nodeId;
 
 void MeshNetwork::setup()
 {
   Heltec.display->init();
   Serial.begin(MONITOR_SPEED);
+
+  pinMode(LORA_DEFAULT_RESET_PIN, OUTPUT);
+  digitalWrite(LORA_DEFAULT_RESET_PIN, HIGH);
 
   rf95.setFrequency(LORA_FREQUENCY);
   rf95.setTxPower(TX_POWER, false);
@@ -27,6 +31,11 @@ void MeshNetwork::setup()
   display.showMessageOnDisplay("RF95 ready");
 
   Serial.print(F("initializing node "));
+  Node node;
+  nodeId = 1;
+  node.setId(nodeId);
+  String uuid = node.generateUUID(nodeId).toCharArray();
+  node.setUuid(uuid);
 
   manager = new RHMesh(rf95, nodeId);
 
@@ -39,6 +48,8 @@ void MeshNetwork::setup()
   {
     Serial.println("Mesh init done");
     display.showMessageOnDisplay("Mesh init done");
+
+    display.showQRCode(uuid);
   }
 }
 
@@ -49,62 +60,62 @@ void MeshNetwork::loop()
     if (n == nodeId)
       continue; // self
 
-    updateRoutingTable();
-    getRouteInfoString(buf, RH_MESH_MAX_MESSAGE_LEN);
+    // updateRoutingTable();
+    // getRouteInfoString(buf, RH_MESH_MAX_MESSAGE_LEN);
 
-    Serial.print(F("->"));
-    Serial.print(n);
-    Serial.print(F(" :"));
-    Serial.print(buf);
+    // Serial.print(F("->"));
+    // Serial.print(n);
+    // Serial.print(F(" :"));
+    // Serial.print(buf);
 
-    // send an acknowledged message to the target node
-    uint8_t error = manager->sendtoWait((uint8_t *)buf, strlen(buf), n);
-    if (error != RH_ROUTER_ERROR_NONE)
-    {
-      Serial.println();
-      Serial.print(F(" ! "));
-      Serial.println(getErrorString(error));
-    }
-    else
-    {
-      Serial.println(F(" OK"));
+    // // send an acknowledged message to the target node
+    // uint8_t error = manager->sendtoWait((uint8_t *)buf, strlen(buf), n);
+    // if (error != RH_ROUTER_ERROR_NONE)
+    // {
+    //   Serial.println();
+    //   Serial.print(F(" ! "));
+    //   Serial.println(getErrorString(error));
+    // }
+    // else
+    // {
+    //   Serial.println(F(" OK"));
 
-      // we received an acknowledgement from the next hop for the node we tried to send to.
-      RHRouter::RoutingTableEntry *route = manager->getRouteTo(n);
-      if (route->next_hop != 0)
-      {
-        rssi[route->next_hop - 1] = rf95.lastRssi();
-      }
-    }
-    if (nodeId == 1)
-      printNodeInfo(nodeId, buf); // debugging
+    //   // we received an acknowledgement from the next hop for the node we tried to send to.
+    //   RHRouter::RoutingTableEntry *route = manager->getRouteTo(n);
+    //   if (route->next_hop != 0)
+    //   {
+    //     rssi[route->next_hop - 1] = rf95.lastRssi();
+    //   }
+    // }
+    // if (nodeId == 1)
+    //   printNodeInfo(nodeId, buf); // debugging
 
-    // listen for incoming messages. Wait a random amount of time before we transmit
-    // again to the next node
-    unsigned long nextTransmit = millis() + TRANSMIT_INTERVAL;
-    while (nextTransmit > millis())
-    {
-      int waitTime = nextTransmit - millis();
-      uint8_t len = sizeof(buf);
-      uint8_t from;
-      if (manager->recvfromAckTimeout((uint8_t *)buf, &len, waitTime, &from))
-      {
-        buf[len] = '\0'; // null terminate string
-        Serial.print(from);
-        Serial.print(F("->"));
-        Serial.print(F(" :"));
-        Serial.println(buf);
-        if (nodeId == 1)
-          printNodeInfo(from, buf); // debugging
+    // // listen for incoming messages. Wait a random amount of time before we transmit
+    // // again to the next node
+    // unsigned long nextTransmit = millis() + TRANSMIT_INTERVAL;
+    // while (nextTransmit > millis())
+    // {
+    //   int waitTime = nextTransmit - millis();
+    //   uint8_t len = sizeof(buf);
+    //   uint8_t from;
+    //   if (manager->recvfromAckTimeout((uint8_t *)buf, &len, waitTime, &from))
+    //   {
+    //     buf[len] = '\0'; // null terminate string
+    //     Serial.print(from);
+    //     Serial.print(F("->"));
+    //     Serial.print(F(" :"));
+    //     Serial.println(buf);
+    //     if (nodeId == 1)
+    //       printNodeInfo(from, buf); // debugging
 
-        // we received data from node 'from', but it may have actually come from an intermediate node
-        RHRouter::RoutingTableEntry *route = manager->getRouteTo(from);
-        if (route->next_hop != 0)
-        {
-          rssi[route->next_hop - 1] = rf95.lastRssi();
-        }
-      }
-    }
+    //     // we received data from node 'from', but it may have actually come from an intermediate node
+    //     RHRouter::RoutingTableEntry *route = manager->getRouteTo(from);
+    //     if (route->next_hop != 0)
+    //     {
+    //       rssi[route->next_hop - 1] = rf95.lastRssi();
+    //     }
+    //   }
+    // }
   }
 }
 
@@ -149,7 +160,7 @@ void MeshNetwork::printNodeInfo(uint8_t node, char *s)
   Serial.println(F("}"));
 }
 
-const __FlashStringHelper *MeshNetwork::getErrorString(uint8_t error)
+const String MeshNetwork::getErrorString(uint8_t error)
 {
   switch (error)
   {

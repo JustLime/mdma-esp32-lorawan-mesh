@@ -32,7 +32,7 @@ String Message::getSerializedMessage()
 {
   StaticJsonDocument<MAX_MESSAGE_SIZE> doc;
   doc["topic"] = this->getPayload().topic;
-  doc["uuid"] = this->getPayload().uuid;
+  doc["sender_uuid"] = this->getPayload().uuid;
   doc["messageTimestamp"] = this->getPayload().messageTimestamp;
   doc["content"]["type"] = this->getPayload().content.type;
   doc["content"]["value"] = this->getPayload().content.value;
