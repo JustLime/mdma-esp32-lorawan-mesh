@@ -22,7 +22,7 @@ private:
   RHMesh *manager;
 
 public:
-  MeshNetwork();
+  MeshNetwork(){};
 
   void setup();
   void loop();

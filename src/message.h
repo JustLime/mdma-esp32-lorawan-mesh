@@ -14,19 +14,11 @@
  *
  */
 
-class Message
+struct Message
 {
-private:
-  uint8_t body;
-
-public:
-  Message();
-  ~Message();
-
-  uint8_t getBody();
-  void setBody(uint8_t body);
-  bool sendMessage();
-  bool receiveMessage();
+  uint8_t preamble;
+  uint8_t header; // TO, FROM, ID, FLAGS
+  uint8_t payload;
 };
 
 #endif // MESSAGE_H

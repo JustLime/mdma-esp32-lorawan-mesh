@@ -17,6 +17,7 @@ void MeshNetwork::setup()
   rf95.setSpreadingFactor(SPREADING_FACTOR);
   rf95.setCADTimeout(CAD_TIMEOUT);
 
+  // See here: https://www.airspayce.com/mikem/arduino/RadioHead/classRH__RF95.html#ab9605810c11c025758ea91b2813666e3
   if (!rf95.setModemConfig(RH_RF95::Bw125Cr45Sf128))
   {
     Serial.println(F(ErrorMessage::MODEM_CONFIG_FAILED));
@@ -169,4 +170,8 @@ const __FlashStringHelper *MeshNetwork::getErrorString(uint8_t error)
     break;
   }
   return F("unknown");
+}
+
+void MeshNetwork::updateRoutingTable()
+{
 }

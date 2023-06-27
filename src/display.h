@@ -6,10 +6,10 @@
 class Display
 {
 public:
-  Display(/* args */);
-  ~Display();
+  Display(){};
 
-  void showMessageOnDisplay(char message[]);
+  void showMessageOnDisplay(char *message);
+  void showMessageOnDisplay(const char *message);
   void showQRCode(uint8_t uuid);
 };
 
