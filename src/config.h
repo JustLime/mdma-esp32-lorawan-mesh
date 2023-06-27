@@ -17,11 +17,13 @@
 #include "heltec.h"
 #include <qrcodeoled.h>
 #include "ArduinoJson.h"
+#include "UUID.h"
 
 #include "display.h"
 #include "mesh_network.h"
 #include "error_message.h"
 #include "message.h"
+#include "node.h"
 
 // All further pin Definitions for Heltec WiFi Lora 32 V2
 #define LORA_SCK 5   // SPI clock pin

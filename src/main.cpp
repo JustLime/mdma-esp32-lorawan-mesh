@@ -116,6 +116,11 @@ void loop()
       Display display;
       display.showMessageOnDisplay("RSSI: " + (String)rssi + " dBm");
 
+      Node node;
+      UUID uuid = node.generateUUID(payload.messageTimestamp.toInt());
+      String uuidString = uuid.toCharArray();
+      Serial.println("UUID: " + uuidString);
+
       // Output the header and message data separately
       Serial.print("Header ID: ");
       Serial.println(headerId);
