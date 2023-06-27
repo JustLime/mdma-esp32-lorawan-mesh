@@ -48,7 +48,7 @@ void loop()
   rf95.send((uint8_t *)message, strlen(message));
   rf95.waitPacketSent();
 
-  Serial.println("Message sent!");
+  Serial.print("Message sent: ");
   Serial.println(message);
 
   delay(3000); // Wait for 3 seconds before sending the next message
