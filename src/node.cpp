@@ -1,6 +1,6 @@
 #include "node.h"
 
-UUID Node::generateUUID(uint8_t id)
+UUID Node::generateUuid(uint8_t id)
 {
   UUID uuid;
   uuid.seed(id);
@@ -14,14 +14,15 @@ void Node::setId(uint8_t id)
   Serial.println("setting nodeId...");
 
   this->id = id;
-  EEPROM.write(0, id);
+  EEPROM.put(0, id);
   Serial.print(F("set nodeId = "));
   Serial.println(id);
 }
 
 uint8_t Node::getId()
 {
-  uint8_t readVal = EEPROM.read(0);
+  uint8_t readVal;
+  EEPROM.get(0, readVal);
 
   Serial.print(F("read nodeId: "));
   Serial.println(readVal);

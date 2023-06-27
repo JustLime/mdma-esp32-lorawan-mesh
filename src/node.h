@@ -16,7 +16,7 @@ public:
   uint8_t getId();
   void setUuid(String uuid);
   String getUuid();
-  UUID generateUUID(uint8_t id);
+  UUID generateUuid(uint8_t id);
 };
 
 #endif // NODE_H

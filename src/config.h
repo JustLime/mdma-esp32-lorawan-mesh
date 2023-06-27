@@ -55,6 +55,8 @@
 
 // Mesh Network
 
+// The set ID for this node. Remember to give different value for each node.
+#define NODE_ID 1
 // Number of nodes in this mesh network.
 #define N_NODES 3
 // Interval of sending messages in milliseconds.
