@@ -30,7 +30,7 @@ struct Content
 struct Payload
 {
   String topic;
-  String uuid;
+  String senderUuid;
   String messageTimestamp;
   Content content;
 };
@@ -43,6 +43,7 @@ private:
 
 public:
   Message();
+  Message(String topic, String senderUuid, String messageTimestamp, String type, String value);
   Message(Header header, Payload payload);
 
   void setHeader(Header header);

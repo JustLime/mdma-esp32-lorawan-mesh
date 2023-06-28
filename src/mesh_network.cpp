@@ -8,6 +8,7 @@ int16_t rssi[N_NODES];   // signal strength info
 char buf[MAX_MESSAGE_SIZE];
 
 uint8_t nodeId;
+String uuid;
 
 void MeshNetwork::setup()
 {
@@ -35,7 +36,7 @@ void MeshNetwork::setup()
 
   node.setId(NODE_ID);
 
-  String uuid = node.generateUuid(NODE_ID).toCharArray();
+  uuid = node.generateUuid(NODE_ID).toCharArray();
   node.setUuid(uuid);
 
   if (!manager.init())
@@ -68,7 +69,13 @@ void MeshNetwork::loop()
     // Serial.print(buf);
 
     // send an acknowledged message to the target node
-    uint8_t sentMessage = manager.sendtoWait((uint8_t *)buf, strlen(buf), RH_BROADCAST_ADDRESS);
+    Message signalStrength = Message("v1/backend/measurements/",
+                                     uuid,
+                                     "0",
+                                     "signal-strength",
+                                     node.generateUuid(n).toCharArray() + (String) "/" + (String)rf95.lastRssi());
+    const char *c_str_message = signalStrength.getSerializedMessage().c_str();
+    uint8_t sentMessage = manager.sendtoWait((uint8_t *)c_str_message, strlen(c_str_message), RH_BROADCAST_ADDRESS);
     if (sentMessage != RH_ROUTER_ERROR_NONE)
     {
       Serial.println();
@@ -109,7 +116,7 @@ void MeshNetwork::loop()
         Serial.println(buf);
         // if (nodeId == 1)
         //   printNodeInfo(from, buf); // debugging
-        Serial.println("RSSI: " + (String)rf95.lastRssi());
+        // Serial.println("RSSI: " + (String)rf95.lastRssi());
 
         // we received data from node 'from', but it may have actually come from an intermediate node
         // RHRouter::RoutingTableEntry *route = manager.getRouteTo(from);
