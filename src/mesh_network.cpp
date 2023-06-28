@@ -38,9 +38,7 @@ void MeshNetwork::setup()
   String uuid = node.generateUuid(NODE_ID).toCharArray();
   node.setUuid(uuid);
 
-  manager = new RHMesh(rf95, NODE_ID);
-
-  if (!manager->init())
+  if (!manager.init())
   {
     Serial.println("Mesh init failed");
     display.showMessageOnDisplay("Mesh init failed");
@@ -62,59 +60,63 @@ void MeshNetwork::loop()
       continue; // self
 
     // updateRoutingTable();
-    getRouteInfoString(buf, MAX_MESSAGE_SIZE);
+    // getRouteInfoString(buf, MAX_MESSAGE_SIZE);
 
-    Serial.print(F("->"));
-    Serial.print(n);
-    Serial.print(F(" :"));
-    Serial.print(buf);
+    // Serial.print(F("->"));
+    // Serial.print(n);
+    // Serial.print(F(" :"));
+    // Serial.print(buf);
 
     // send an acknowledged message to the target node
-    uint8_t error = manager->sendtoWait((uint8_t *)buf, strlen(buf), n);
-    if (error != RH_ROUTER_ERROR_NONE)
+    uint8_t sentMessage = manager.sendtoWait((uint8_t *)buf, strlen(buf), RH_BROADCAST_ADDRESS);
+    if (sentMessage != RH_ROUTER_ERROR_NONE)
     {
       Serial.println();
       Serial.print(F(" ! "));
-      Serial.println(getErrorString(error));
+      Serial.println(getErrorString(sentMessage));
     }
     else
     {
       Serial.println(F(" OK"));
-
-      // we received an acknowledgement from the next hop for the node we tried to send to.
-      RHRouter::RoutingTableEntry *route = manager->getRouteTo(n);
-      if (route->next_hop != 0)
-      {
-        rssi[route->next_hop - 1] = rf95.lastRssi();
-      }
     }
-    if (nodeId == 1)
-      printNodeInfo(nodeId, buf); // debugging
+
+    //   // we received an acknowledgement from the next hop for the node we tried to send to.
+    //   RHRouter::RoutingTableEntry *route = manager.getRouteTo(n);
+    //   if (route->next_hop != 0)
+    //   {
+    //     rssi[route->next_hop - 1] = rf95.lastRssi();
+    //   }
+    // }
+    // if (nodeId == 1)
+    //   printNodeInfo(nodeId, buf); // debugging
 
     // listen for incoming messages. Wait a random amount of time before we transmit
     // again to the next node
+
     unsigned long nextTransmit = millis() + TRANSMIT_INTERVAL;
     while (nextTransmit > millis())
     {
       int waitTime = nextTransmit - millis();
       uint8_t len = sizeof(buf);
       uint8_t from;
-      if (manager->recvfromAckTimeout((uint8_t *)buf, &len, waitTime, &from))
+
+      if (manager.recvfromAck((uint8_t *)buf, &len, &from))
       {
         buf[len] = '\0'; // null terminate string
         Serial.print(from);
         Serial.print(F("->"));
         Serial.print(F(" :"));
         Serial.println(buf);
-        if (nodeId == 1)
-          printNodeInfo(from, buf); // debugging
+        // if (nodeId == 1)
+        //   printNodeInfo(from, buf); // debugging
+        Serial.println("RSSI: " + (String)rf95.lastRssi());
 
         // we received data from node 'from', but it may have actually come from an intermediate node
-        RHRouter::RoutingTableEntry *route = manager->getRouteTo(from);
-        if (route->next_hop != 0)
-        {
-          rssi[route->next_hop - 1] = rf95.lastRssi();
-        }
+        // RHRouter::RoutingTableEntry *route = manager.getRouteTo(from);
+        // if (route->next_hop != 0)
+        // {
+        //   rssi[route->next_hop - 1] = rf95.lastRssi();
+        // }
       }
     }
   }
@@ -188,19 +190,19 @@ void MeshNetwork::updateRoutingTable()
 {
   for (uint8_t n = 1; n <= N_NODES; n++)
   {
-    RHRouter::RoutingTableEntry *route = manager->getRouteTo(n);
+    RHRouter::RoutingTableEntry *route = manager.getRouteTo(n);
     if (n == nodeId)
     {
       routes[n - 1] = 255; // self
     }
     else
     {
-      routes[n - 1] = route->next_hop;
-      if (routes[n - 1] == 0)
-      {
-        // if we have no route to the node, reset the received signal strength
-        rssi[n - 1] = 0;
-      }
+      // routes[n - 1] = route->next_hop;
+      // if (routes[n - 1] == 0)
+      // {
+      //   // if we have no route to the node, reset the received signal strength
+      //   rssi[n - 1] = 0;
+      // }
     }
   }
 }

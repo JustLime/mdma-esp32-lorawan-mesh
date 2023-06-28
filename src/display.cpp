@@ -33,4 +33,5 @@ void Display::showQRCode(String uuid)
 
   qrcode.init();
   qrcode.create(uuid);
+  delay(500);
 }
