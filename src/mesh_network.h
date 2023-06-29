@@ -19,10 +19,10 @@ class MeshNetwork
 {
 private:
   RH_RF95 rf95;
-  RHMesh manager;
+  RHMesh *manager;
 
 public:
-  MeshNetwork() : rf95(LORA_DEFAULT_SS_PIN, LORA_DEFAULT_DIO0_PIN), manager(rf95, 1){};
+  MeshNetwork() : rf95(LORA_DEFAULT_SS_PIN, LORA_DEFAULT_DIO0_PIN){};
 
   void setup();
   void loop();
