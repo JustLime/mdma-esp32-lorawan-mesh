@@ -1,89 +1,153 @@
-#include "heltec.h"
-#define BAND 868E6
+// Production implementation
 
-int counter = 0;
-bool receiver = false;
-String rssi = "RSSI --";
-String packSize = "--";
-String packet;
+#include "config.h"
+
+RH_RF95 rf95(LORA_DEFAULT_SS_PIN, LORA_DEFAULT_DIO0_PIN);
+MeshNetwork network;
 
 void setup()
 {
-  Heltec.begin(true, true, true, true, BAND);
+  EEPROM.begin(EEPROM_SIZE);
 
-  if (receiver)
-  {
-    Heltec.display->init();
-    Heltec.display->flipScreenVertically();
-    Heltec.display->setFont(ArialMT_Plain_10);
-    delay(1500);
-    Heltec.display->clear();
+  network.setup();
 
-    Heltec.display->drawString(0, 0, "Heltec.LoRa Initial success!");
-    Heltec.display->drawString(0, 10, "Wait for incoming data...");
-    Heltec.display->display();
-    delay(1000);
-    // LoRa.onReceive(cbk);
-    LoRa.receive();
-  }
-}
-void LoRaData()
-{
-  Heltec.display->clear();
-  Heltec.display->setTextAlignment(TEXT_ALIGN_LEFT);
-  Heltec.display->setFont(ArialMT_Plain_10);
-  Heltec.display->drawString(0, 15, "Received " + packSize + " bytes");
-  Heltec.display->drawStringMaxWidth(0, 26, 128, packet);
-  Heltec.display->drawString(0, 0, rssi);
-  Heltec.display->display();
-}
-
-void cbk(int packetSize)
-{
-  packet = "";
-  packSize = String(packetSize, DEC);
-  for (int i = 0; i < packetSize; i++)
-  {
-    packet += (char)LoRa.read();
-  }
-  rssi = "RSSI " + String(LoRa.packetRssi(), DEC);
-  LoRaData();
+  network.initRoutes();
 }
 
 void loop()
 {
-  if (receiver)
-  {
-    int packetSize = LoRa.parsePacket();
-    if (packetSize)
-    {
-      cbk(packetSize);
-    }
-    delay(10);
-  }
-  else
-  {
-
-    Serial.print("Sending packet: ");
-    Serial.println(counter);
-    // send packet
-    LoRa.beginPacket();
-    /*
-     * LoRa.setTxPower(txPower,RFOUT_pin);
-     * txPower -- 0 ~ 20
-     * RFOUT_pin could be RF_PACONFIG_PASELECT_PABOOST or RF_PACONFIG_PASELECT_RFO
-     *   - RF_PACONFIG_PASELECT_PABOOST -- LoRa single output via PABOOST, maximum output 20dBm
-     *   - RF_PACONFIG_PASELECT_RFO     -- LoRa single output via RFO_HF / RFO_LF, maximum output 14dBm
-     */
-    LoRa.setTxPower(14, RF_PACONFIG_PASELECT_PABOOST);
-    LoRa.print("hello ");
-    LoRa.print(counter);
-    LoRa.endPacket();
-
-    counter++;
-    digitalWrite(25, HIGH);
-    delay(1000);
-    digitalWrite(25, LOW);
-    delay(1000);
-  }
+  network.loop();
 }
+
+// Testing code for trivial sending packages every 5 seconds
+
+// #include "RH_RF95.h"
+
+// RH_RF95 rf95(LORA_DEFAULT_SS_PIN, LORA_DEFAULT_DIO0_PIN);
+
+// void setup()
+// {
+//   Serial.begin(MONITOR_SPEED);
+//   Heltec.display->init();
+
+//   pinMode(LORA_DEFAULT_RESET_PIN, OUTPUT);
+//   digitalWrite(LORA_DEFAULT_RESET_PIN, HIGH);
+
+//   if (!rf95.init())
+//   {
+//     Serial.println(ErrorMessage::LORA_INIT_FAILED);
+//     while (1)
+//       ;
+//   }
+
+//   rf95.setFrequency(LORA_FREQUENCY);
+//   rf95.setTxPower(TX_POWER, false);
+// }
+
+// void loop()
+// {
+//   char data[] = "Hello, receiver!"; // Message data
+
+//   rf95.send((uint8_t *)data, sizeof(data)); // Send the message data
+//   rf95.waitPacketSent();
+
+//   Serial.println("Message sent.");
+
+//   delay(TRANSMIT_INTERVAL);
+// }
+
+// Testing code for trivial receiving packages
+
+// #include "RH_RF95.h"
+
+// RH_RF95 rf95(LORA_DEFAULT_SS_PIN, LORA_DEFAULT_DIO0_PIN);
+
+// void setup()
+// {
+//   Serial.begin(MONITOR_SPEED);
+
+//   pinMode(LORA_DEFAULT_RESET_PIN, OUTPUT);
+//   digitalWrite(LORA_DEFAULT_RESET_PIN, HIGH);
+
+//   if (!rf95.init())
+//   {
+//     Serial.println("LoRa initialization failed!");
+//     while (1)
+//       ;
+//   }
+
+//   rf95.setFrequency(LORA_FREQUENCY);
+//   rf95.setTxPower(TX_POWER, false);
+// }
+
+// void loop()
+// {
+//   if (rf95.available())
+//   {
+//     uint8_t buf[RH_RF95_MAX_MESSAGE_LEN];
+//     uint8_t len = sizeof(buf);
+//     int8_t rssi = rf95.lastRssi();
+//     int8_t headerId = rf95.headerId();
+//     int8_t headerFrom = rf95.headerFrom();
+//     int8_t headerTo = rf95.headerTo();
+//     int8_t headerFlags = rf95.headerFlags();
+
+//     if (rf95.recv(buf, &len))
+//     {
+//       // Output the received message byte by byte
+//       Serial.print("Received message: ");
+//       for (int i = 0; i < len; i++)
+//       {
+//         Serial.print(buf[i], HEX);
+//         Serial.print(" ");
+//       }
+//       Serial.println();
+
+//       Message message;
+//       Payload payload;
+//       Content content;
+
+//       payload.topic = "v1/backend/measurements/";
+//       payload.messageTimestamp = "1000000000";
+//       content.type = "signal-strength";
+//       content.value = "0cd1852e-196b-4e2a-a398-6ae835d0caee/-53";
+//       payload.content = content;
+//       payload.uuid = "0cd1852e-196b-4e2a-a398-6ae835d0caee";
+//       message.setPayload(payload);
+
+//       Display display;
+//       display.showMessageOnDisplay("RSSI: " + (String)rssi + " dBm");
+
+//       Node node;
+//       UUID uuid = node.generateUUID(payload.messageTimestamp.toInt());
+//       String uuidString = uuid.toCharArray();
+//       Serial.println("UUID: " + uuidString);
+//       Serial.println(message.getSerializedMessage());
+
+//       // Output the header and message data separately
+//       Serial.print("Header ID: ");
+//       Serial.println(headerId);
+//       Serial.print("Header From: ");
+//       Serial.println(headerFrom);
+//       Serial.print("Header To: ");
+//       Serial.println(headerTo);
+//       Serial.print("Header Flags: ");
+//       Serial.println(headerFlags);
+//       Serial.print("Received message: ");
+//       for (int i = 0; i < len - 1; i++)
+//       {
+//         Serial.print((char)buf[i]);
+//       }
+//       Serial.println();
+
+//       // Output the RSSI value of the received message
+//       Serial.print("RSSI: ");
+//       Serial.print(rssi);
+//       Serial.println(" dBm");
+//     }
+//     else
+//     {
+//       Serial.println("Receive failed.");
+//     }
+//   }
+// }
