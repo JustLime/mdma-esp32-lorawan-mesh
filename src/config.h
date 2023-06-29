@@ -26,7 +26,7 @@
 #include "message.h"
 #include "node.h"
 
-// All further pin Definitions for Heltec WiFi Lora 32 V2
+// All further definitions for Heltec WiFi Lora 32 V2
 
 // SPI clock pin.
 #define LORA_SCK 5
@@ -38,9 +38,8 @@
 #define LORA_DI1 35
 // Interrupt pin for DI2.
 #define LORA_DI2 34
-
-// Specific settings for ESP32 devices
-
+// LED on the device.
+#define LED 25
 // Serial monitor speed used for this device.
 #define MONITOR_SPEED 115200
 // Size of the EEPROM (Electrically Erasable Programmable Read Only Memory).
@@ -56,9 +55,9 @@
 // Mesh Network
 
 // The set ID for this node. Remember to give different value for each node.
-#define NODE_ID 2
+#define NODE_ID 4
 // Number of nodes in this mesh network.
-#define N_NODES 3
+#define N_NODES 4
 // Interval of sending messages in milliseconds.
 #define TRANSMIT_INTERVAL 3000
 // Initial node ID for a node, should be overwritten by the right ID.
@@ -67,7 +66,9 @@
 #define GATEWAY_ADDRESS 0
 
 // LoRa
-#define MAX_MESSAGE_SIZE 244 /// Maximum message size of 244 bytes.
+
+// Maximum message size of 244 bytes.
+#define MAX_MESSAGE_SIZE 244
 /// Spreading factor of the transmission.
 /// The higher the spreading factor the slower is the transmission speed but more devices could be reached.
 /// Minimium is 7, maximum is 12.

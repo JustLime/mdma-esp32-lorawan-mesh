@@ -88,8 +88,13 @@ void MeshNetwork::loop()
     {
       Serial.println(F(" OK"));
 
+      digitalWrite(LED, HIGH);
+      delay(500);
+      digitalWrite(LED, LOW);
+
       // we received an acknowledgement from the next hop for the node we tried to send to.
       // RHRouter::RoutingTableEntry *route = manager->getRouteTo(n);
+      // FIXME: Microcontroller is crashing, because route is always null. Perhaps the library has a bug.
       // if (route->next_hop != 0)
       // {
       //   rssi[route->next_hop - 1] = rf95.lastRssi();
@@ -117,11 +122,28 @@ void MeshNetwork::loop()
         Serial.println(buf);
         // if (nodeId == 1)
         //   printNodeInfo(from, buf); // debugging
+
+        digitalWrite(LED, HIGH);
+        delay(200);
+        digitalWrite(LED, LOW);
+        delay(200);
+        digitalWrite(LED, HIGH);
+        delay(200);
+        digitalWrite(LED, LOW);
+        delay(200);
+        digitalWrite(LED, HIGH);
+        delay(200);
+        digitalWrite(LED, LOW);
+        delay(200);
+
         Serial.println("RSSI: " + (String)rf95.lastRssi());
+
+        manager->sendtoWait((uint8_t *)buf, strlen(buf), RH_BROADCAST_ADDRESS);
 
         // we received data from node 'from', but it may have actually come from an intermediate node
         // RHRouter::RoutingTableEntry *route = manager->getRouteTo(from);
         // if (route->next_hop != 0)
+        // FIXME: Microcontroller is crashing, because route is always null. Perhaps the library has a bug.
         // {
         //   rssi[route->next_hop - 1] = rf95.lastRssi();
         // }
@@ -199,6 +221,7 @@ void MeshNetwork::updateRoutingTable()
   for (uint8_t n = 1; n <= N_NODES; n++)
   {
     RHRouter::RoutingTableEntry *route = manager->getRouteTo(n);
+    // FIXME: Microcontroller is crashing, because route is always null. Perhaps the library has a bug.
     if (n == nodeId)
     {
       routes[n - 1] = 255; // self

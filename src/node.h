@@ -1,6 +1,17 @@
 #ifndef NODE_H
 #define NODE_H
 
+/**
+ * @file node.h
+ * @author Christian Deme, Leon Trunk, Rudolf Zitlau
+ * @brief Defines a node at its functions used in a mesh network.
+ * @version 0.1
+ * @date 2023-06-23
+ *
+ * @copyright Copyright (c) 2023
+ *
+ */
+
 #include "config.h"
 
 class Node
