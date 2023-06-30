@@ -14,6 +14,9 @@ Our project consisted of equipping a forest with a mesh network built using LoRa
 - [HelTecAutomation/Heltec_ESP32](https://github.com/HelTecAutomation/Heltec_ESP32/tree/master)
 - [hallard/RadioHead](https://github.com/hallard/RadioHead)
 - [yoprogramo/QRcodeDisplay](https://github.com/yoprogramo/QRcodeDisplay)
+- [ThingPulse/esp8266-oled-ssd1306](https://github.com/ThingPulse/esp8266-oled-ssd1306)
+- [bblanchon/ArduinoJson](https://github.com/bblanchon/ArduinoJson)
+- [robtillaart/UUID](https://github.com/robtillaart/UUID)
 
 ## Interface Specification
 
