@@ -17,7 +17,7 @@ Our project consisted of equipping a forest with a mesh network built using LoRa
 
 ## Interface Specification
 
-To be compatible with the massage format that the gateway understand, we created the following interface specification.
+To be compatible with the message format that the gateway understand, we created the following interface specification.
 
 [Interface Specification](doc/interface.md)
 
