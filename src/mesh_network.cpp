@@ -5,7 +5,7 @@ Node node;
 
 uint8_t routes[N_NODES]; // full routing table for mesh
 int16_t rssi[N_NODES];   // signal strength info
-char buf[MAX_MESSAGE_SIZE];
+uint8_t buf[MAX_MESSAGE_SIZE];
 
 uint8_t nodeId;
 String uuid;
@@ -68,7 +68,7 @@ void MeshNetwork::loop()
     Serial.print(F("->"));
     Serial.print(n);
     Serial.print(F(" :"));
-    Serial.print(buf);
+    Serial.print((char *)buf);
 
     // send an acknowledged message to the target node
     Message signalStrength = Message("v1/backend/measurements/",
@@ -76,8 +76,9 @@ void MeshNetwork::loop()
                                      "0",
                                      "signal-strength",
                                      node.generateUuid(n).toCharArray() + (String) "/" + (String)rf95.lastRssi());
-    const char *c_str_message = signalStrength.getSerializedMessage().c_str();
-    uint8_t sentMessage = manager->sendtoWait((uint8_t *)c_str_message, strlen(c_str_message), RH_BROADCAST_ADDRESS);
+
+    uint8_t sentMessage = node.sendMessage(manager, signalStrength, RH_BROADCAST_ADDRESS);
+
     if (sentMessage != RH_ROUTER_ERROR_NONE)
     {
       Serial.println();
@@ -87,10 +88,6 @@ void MeshNetwork::loop()
     else
     {
       Serial.println(F(" OK"));
-
-      digitalWrite(LED, HIGH);
-      delay(500);
-      digitalWrite(LED, LOW);
 
       // we received an acknowledgement from the next hop for the node we tried to send to.
       // RHRouter::RoutingTableEntry *route = manager->getRouteTo(n);
@@ -115,30 +112,32 @@ void MeshNetwork::loop()
 
       if (manager->recvfromAck((uint8_t *)buf, &len, &from))
       {
-        buf[len] = '\0'; // null terminate string
-        Serial.print(from);
-        Serial.print(F("->"));
-        Serial.print(F(" :"));
-        Serial.println(buf);
-        // if (nodeId == 1)
-        //   printNodeInfo(from, buf); // debugging
+        if (buf[0] == 0xFF)
+        {
+          UpdateBlock block = parseUpdateBlock(buf, len);
+          Serial.print("received UpdateBlock no ");
+          Serial.print(block.blockIndex);
+          Serial.print(": Content: ");
+          Serial.println(std::string(block.blockContent.begin(), block.blockContent.end()).c_str());
+          Serial.print("rssi: ");
+          Serial.println(rf95.lastRssi());
+          Serial.println("----------");
+          node.handleUpdateMessage(block, manager);
+        }
+        else
+        {
+          buf[len] = '\0'; // null terminate string
+          Serial.print(from);
+          Serial.print(F("->"));
+          Serial.print(F(" :"));
+          Serial.println((char *)buf);
+          // if (nodeId == 1)
+          //   printNodeInfo(from, buf); // debugging
 
-        digitalWrite(LED, HIGH);
-        delay(200);
-        digitalWrite(LED, LOW);
-        delay(200);
-        digitalWrite(LED, HIGH);
-        delay(200);
-        digitalWrite(LED, LOW);
-        delay(200);
-        digitalWrite(LED, HIGH);
-        delay(200);
-        digitalWrite(LED, LOW);
-        delay(200);
+          Serial.println("RSSI: " + (String)rf95.lastRssi());
+        }
 
-        Serial.println("RSSI: " + (String)rf95.lastRssi());
-
-        manager->sendtoWait((uint8_t *)buf, strlen(buf), RH_BROADCAST_ADDRESS);
+        manager->sendtoWait(buf, sizeof(buf), RH_BROADCAST_ADDRESS);
 
         // we received data from node 'from', but it may have actually come from an intermediate node
         // RHRouter::RoutingTableEntry *route = manager->getRouteTo(from);

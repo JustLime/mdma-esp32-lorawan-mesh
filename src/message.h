@@ -13,28 +13,6 @@
  * @copyright Copyright (c) 2023
  */
 
-struct Header
-{
-  uint8_t to;
-  uint8_t from;
-  uint8_t id;
-  uint8_t flags;
-};
-
-struct Content
-{
-  String type;
-  String value;
-};
-
-struct Payload
-{
-  String topic;
-  String senderUuid;
-  String messageTimestamp;
-  Content content;
-};
-
 class Message
 {
 private:
@@ -52,5 +30,11 @@ public:
   Payload getPayload();
   String getSerializedMessage();
 };
+
+UpdateBlock parseUpdateBlock(const uint8_t *receivedPacket, size_t size);
+
+void serializeUpdateBlock(uint8_t *updatePacketLocation, size_t reservedSize, UpdateBlock updateBlock);
+
+UpdateBlock createUpdateBlock(uint16_t versionNumber, uint16_t numberOfBlocks, uint16_t blockIndex, std::vector<uint8_t> &blockContent);
 
 #endif // MESSAGE_H

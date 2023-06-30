@@ -19,12 +19,20 @@
 #include "ArduinoJson.h"
 #include "UUID.h"
 #include "EEPROM.h"
+#include "Update.h"
 
+#include <vector>
+#include <unordered_map>
+#include <memory>
+#include <cstring>
+
+#include "message_blocks.h"
 #include "display.h"
 #include "mesh_network.h"
 #include "error_message.h"
 #include "message.h"
 #include "node.h"
+#include "ota_update.h"
 
 // All further definitions for Heltec WiFi Lora 32 V2
 
@@ -64,6 +72,8 @@
 #define INITIAL_NODE_ID 255
 // Node ID of the gateway ESP32 device.
 #define GATEWAY_ADDRESS 0
+// Current firmware version of node.
+#define CURRENT_VERSION 1
 
 // LoRa
 

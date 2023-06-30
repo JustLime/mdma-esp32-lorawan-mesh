@@ -19,14 +19,25 @@ class Node
 private:
   uint8_t id;
   String uuid;
+  RHMesh *manager;
 
 public:
   Node(){};
+  Node(RHMesh *manager)
+  {
+    this->manager = manager;
+  };
 
   void setId(uint8_t id);
   uint8_t getId();
   void setUuid(String uuid);
   String getUuid();
+  uint8_t sendMessage(RHMesh *manager, Message message, uint8_t to);
+  void handleUpdateMessage(UpdateBlock updateBlock, RHMesh *manager);
+  void requestMissingPacket(uint16_t blockIndex);
+  bool checkIfPreviouslyReceived(uint16_t version, uint16_t blockIndex);
+  uint32_t makeKey(uint16_t version, uint16_t blockIndex);
+  void broadcastUpdateBlock(UpdateBlock updateBlock, RHMesh *manager);
   UUID generateUuid(uint8_t id);
 };
 
