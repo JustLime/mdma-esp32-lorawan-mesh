@@ -23,7 +23,7 @@ To be compatible with the massage format that the gateway understand, we created
 
 ## How it works
 
-The directory `src/` contains the source code for the project. Before the program can be started, all necessary settings must be made in `config.h`.
+The directory `/src` contains the source code for the project. Before the program can be started, all necessary settings must be made in `config.h`.
 The main program is executed in `main.cpp`.
 
 Tested with PlatformIO and Visual Studio Code.
