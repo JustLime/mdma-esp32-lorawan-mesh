@@ -31,7 +31,6 @@
 #include "mesh_network.h"
 #include "error_message.h"
 #include "message.h"
-#include "node.h"
 #include "ota_update.h"
 
 // All further definitions for Heltec WiFi Lora 32 V2

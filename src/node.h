@@ -12,7 +12,9 @@
  *
  */
 
-#include "config.h"
+#include "RHMesh.h"
+#include "heltec.h"
+#include "message.h"
 
 class Node
 {

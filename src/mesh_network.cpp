@@ -1,4 +1,5 @@
 #include "config.h"
+#include "node.h"
 
 Display display;
 Node node;
